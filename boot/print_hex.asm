@@ -28,7 +28,7 @@ step2:
 
 end:
   mov bx, HEX_OUT
-  call print_string
+  call print
 
   popa
 ret

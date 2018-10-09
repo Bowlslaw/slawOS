@@ -1,4 +1,6 @@
-print_string:
+  ;; 16-bit real mode printing routine
+  ;; Expects argument in 'bx', will only work in 16-bit real mode
+print:
   pusha
 
   start:
@@ -6,7 +8,7 @@ print_string:
     cmp al, 0
     je done
 
-    mov ah, 0x0e
+    mov ah, 0x0e                ; 0x0e is tty mode
     int 0x10
 
     add bx, 1
@@ -16,6 +18,7 @@ print_string:
     popa
 ret
 
+  ;; prints a new-line
 print_nl:
   pusha
 

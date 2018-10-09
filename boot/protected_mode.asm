@@ -5,7 +5,7 @@ switch_pm:
 
   lgdt [gdt_descriptor]         ; load global descriptor table
 
-  mov eax, cr0                  ; to switch to prot moe, set first bit of cr0
+  mov eax, cr0                  ; to switch to prot mode, set first bit of cr0
   or eax, 0x1
   mov cr0, eax
 

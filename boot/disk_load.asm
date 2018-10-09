@@ -18,7 +18,7 @@ ret
 
 disk_error:
   mov bx, DISK_ERROR_MSG
-  call print_string
+  call print
   jmp $
 
   ;; Variables
