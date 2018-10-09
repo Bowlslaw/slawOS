@@ -1,4 +1,4 @@
-  ;; Read sectors from boot disk using dusk_read
+  ;; Read sectors from boot disk using disk_read
   [org 0x7c00]
 
   mov [BOOT_DRIVE], dl          ; BIOS stores boot drive in dl
@@ -21,8 +21,8 @@
 
   jmp $
 
-%include "print_string.asm"
-%include "print_hex.asm"
+%include "print/print_string.asm"
+%include "print/print_hex.asm"
 %include "disk_load.asm"
 
 BOOT_DRIVE: db 0
