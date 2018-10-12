@@ -1,3 +1,5 @@
+#include "utils.h"
+
 /* Copy bytes from src to dest */
 void mem_cpy(char *src, char *dest, int bytes) {
   int i;
@@ -6,6 +8,12 @@ void mem_cpy(char *src, char *dest, int bytes) {
   }
 }
 
+void mem_set(u8 *dest, u8 val, u32 len) {
+  u8 *temp = (u8 *)dest;
+  for( ;len != 0; len--) {
+    *temp++ = val;
+  }
+}
 
 void int2ascii(int n, char *str) {
   int i, sign;
