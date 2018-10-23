@@ -1,4 +1,5 @@
 #include "mem.h"
+#include <stdint.h>
 
 /* Copy bytes from src to dest */
 void mem_cpy(char *src, char *dest, int bytes) {
@@ -8,8 +9,8 @@ void mem_cpy(char *src, char *dest, int bytes) {
   }
 }
 
-void mem_set(u8 *dest, u8 val, u32 len) {
-  u8 *temp = (u8 *)dest;
+void mem_set(uint8_t *dest, uint8_t val, uint32_t len) {
+  uint8_t *temp = (uint8_t *)dest;
   for( ;len != 0; len--) {
     *temp++ = val;
   }

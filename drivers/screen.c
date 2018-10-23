@@ -1,6 +1,9 @@
 #include "screen.h"
 #include "../libc/mem.h"
 #include "../cpu/io.h"
+#include <stdint.h>
+
+#define BACKSPACE 0x08
 
 /* Private functions */
 int get_cursor_offset();
@@ -51,7 +54,7 @@ void kprint_backspace() {
  * if 'attr' is zero, use 'white on black'
  * set video cursot to returned offset */
 int print_char(char c, int col, int row, char attr) {
-  unsigned char *vidmem = (u8 *)VIDEO_ADDRESS;
+  uint8_t *vidmem = (uint8_t *)VIDEO_ADDRESS;
   if(!attr)
     attr = WHITE_ON_BLACK;
 
@@ -71,24 +74,26 @@ int print_char(char c, int col, int row, char attr) {
   if(c == '\n') {
     row = get_offset_row(offset);
     offset = get_offset(0, row + 1);
-  }
-  else {
-    vidmem[offset] = c;
-    vidmem[offset + 1] = attr;
-    offset += 2;
-  }
+  } else if (c == BACKSPACE) {
+		  vidmem[offset] = ' ';
+		  vidmem[offset+1] = attr;
+	} else {
+      vidmem[offset] = c;
+			vidmem[offset + 1] = attr;
+			offset += 2;
+	}
 
   /* Check if offset over screen size */
   if(offset >= MAX_ROWS * MAX_COLS * 2) {
     int i;
     for(i = 1; i < MAX_ROWS; i++)
-      mem_cpy((u8 *)(get_offset(0, i) + VIDEO_ADDRESS),
-              (u8 *)(get_offset(0, i-1) + VIDEO_ADDRESS),
+      mem_cpy((uint8_t *)(get_offset(0, i) + VIDEO_ADDRESS),
+              (uint8_t *)(get_offset(0, i-1) + VIDEO_ADDRESS),
               MAX_COLS * 2
       );
 
     /* Blank last line */
-    char *last_line = (char *)(get_offset(0, MAX_ROWS - 1) + VIDEO_ADDRESS);
+    char *last_line = (char *)(get_offset(0, MAX_ROWS - 1) + (uint8_t *)VIDEO_ADDRESS);
     for(i = 0; i < MAX_COLS * 2; i++)
       last_line[i] = 0;
 

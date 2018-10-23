@@ -1,10 +1,11 @@
 #include "string.h"
 
 /* Return length of string */
-int str_len(char s[]) {
-	int i = 0;
-	while(s[i] != '\0')
-		++i;
+int str_len(char *s) {
+	int i;
+
+	for(i = 0; *s != '\0'; s++)
+		i++;
 	return i;
 }
 
@@ -48,11 +49,9 @@ void backspace(char s[]) {
 	s[len-1] = '\0';
 }
 
-int str_cmp(char s1[], char s2[]) {
-	int i;
-	for(i = 0; s1[i] == s2[i]; i++) {
-		if(s1[i] == '\0')
+int str_cmp(char *s, char *t) {
+	for( ; *s == *t; s++, t++)
+		if(*s == '\0')
 			return 0;
-	}
-	return s1[i] - s2[i];
+	return *s - *t;
 }

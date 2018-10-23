@@ -1,12 +1,12 @@
 #ifndef MEM_H
 #define MEM_H
 
-#include "../cpu/types.h"
+#include <stdint.h>
 
 /* Copy bytes from src to dest */
 void mem_cpy(char *src, char *dest, int bytes);
 
 /* TODO: Provide short explanation */
-void mem_set(u8 *dest, u8 val, u32 len);
+void mem_set(uint8_t *dest, uint8_t val, uint32_t len);
 
 #endif

@@ -8,7 +8,7 @@ CC = ~/opt/cross/bin/i686-elf-gcc
 LD = ~/opt/cross/bin/i686-elf-ld
 GDB = ~/opt/cross/bin/i686-elf-gdb
 
-CFLAGS = -g -Wall -Wextra
+CFLAGS = -ffreestanding -g -Wall -Wextra
 
 # Disk image the computer loads: compiled bootsector + kernel
 os-image.bin: boot/boot_sect.bin kernel.bin

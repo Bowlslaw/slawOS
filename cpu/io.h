@@ -1,11 +1,11 @@
 #ifndef IO_H
 #define IO_H
 
-#include "../cpu/types.h"
+#include <stdint.h>
 
-unsigned char port_byte_in(u16 port);
-void port_byte_out(u16 port, u8 data);
-unsigned short port_word_in(u16 port);
-void port_word_out(u16 port, u16 data);
+unsigned char port_byte_in(uint16_t port);
+void port_byte_out(uint16_t port, uint8_t data);
+unsigned short port_word_in(uint16_t port);
+void port_word_out(uint16_t port, uint16_t data);
 
 #endif

@@ -13,11 +13,14 @@ isr_common_stub:
   mov es, ax
   mov fs, ax
   mov gs, ax
+  push esp                      ; registers_t *r
 
   ;; 2) Call C handler
+  cld                           ; SystemV ABI requires DF to be clear on function entry
   call isr_handler
 
   ;; 3) Restore state
+  pop eax
   pop eax
   mov ds, ax
   mov es, ax
@@ -25,7 +28,6 @@ isr_common_stub:
   mov gs, ax
   popa
   add esp, 8                    ; clean up pushed error code and ISR number
-  sti
   iret                          ; pop: CS, EIP, EFLAGS, SS, ESP
 
 irq_common_stub:
@@ -37,7 +39,10 @@ irq_common_stub:
   mov es, ax
   mov fs, ax
   mov gs, ax
+  push esp
+  cld
   call irq_handler
+  pop ebx
   pop ebx
   mov ds, bx
   mov es, bx
@@ -45,7 +50,6 @@ irq_common_stub:
   mov gs, bx
   popa
   add esp, 8
-  sti
   iret
 
   ;; Some interrupts push an error code onto the stack, but other don't.
