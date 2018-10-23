@@ -1,20 +1,6 @@
-#include "utils.h"
+#include "string.h"
 
-/* Copy bytes from src to dest */
-void mem_cpy(char *src, char *dest, int bytes) {
-  int i;
-  for(i = 0; i < bytes; i++) {
-    *(dest + i) = *(src + i);
-  }
-}
-
-void mem_set(u8 *dest, u8 val, u32 len) {
-  u8 *temp = (u8 *)dest;
-  for( ;len != 0; len--) {
-    *temp++ = val;
-  }
-}
-
+/* Return length of string */
 int str_len(char s[]) {
 	int i = 0;
 	while(s[i] != '\0')
@@ -22,6 +8,7 @@ int str_len(char s[]) {
 	return i;
 }
 
+/* Reverse a string */
 void reverse(char s[]) {
 	int c, i, j;
 	for(i = 0, j = str_len(s) - 1; i < j; i++, j--) {
@@ -31,6 +18,7 @@ void reverse(char s[]) {
 	}
 }
 
+/* Convert an integer to its ASCII representation */
 void int2ascii(int n, char *str) {
   int i, sign;
   if((sign = n) < 0)
@@ -49,3 +37,22 @@ void int2ascii(int n, char *str) {
 	reverse(str);
 }
 
+void append(char s[], char n) {
+	int len = str_len(s);
+	s[len] = n;
+	s[len-1] = '\0';
+}
+
+void backspace(char s[]) {
+	int len = str_len(s);
+	s[len-1] = '\0';
+}
+
+int str_cmp(char s1[], char s2[]) {
+	int i;
+	for(i = 0; s1[i] == s2[i]; i++) {
+		if(s1[i] == '\0')
+			return 0;
+	}
+	return s1[i] - s2[i];
+}

@@ -1,8 +1,5 @@
-# Generate lists of sources using wildcards
-C_SOURCES = $(wildcard kernel/*.c drivers/*.c cpu/*.c)
-HEADERS = $(wildcard kernel/*.h drivers/*.h cpu/*.h)
-
-# TODO: Make sources dep on all header files
+C_SOURCES = $(wildcard kernel/*.c drivers/*.c cpu/*.c libc/*.c)
+HEADERS = $(wildcard kernel/*.h drivers/*.h cpu/*.h libc/*.h)
 
 # Convert *.c filename to *.o
 OBJ = ${C_SOURCES:.c=.o cpu/interrupt.o}
@@ -11,7 +8,7 @@ CC = ~/opt/cross/bin/i686-elf-gcc
 LD = ~/opt/cross/bin/i686-elf-ld
 GDB = ~/opt/cross/bin/i686-elf-gdb
 
-CFLAGS = -g
+CFLAGS = -g -Wall -Wextra
 
 # Disk image the computer loads: compiled bootsector + kernel
 os-image.bin: boot/boot_sect.bin kernel.bin
@@ -51,5 +48,5 @@ run: all
 # Clear generated files
 clean:
 	rm -rf *.bin *.dis *.o *.elf
-	rm -rf kernel/*.o boot/*.bin boot/*.o drivers/*.o cpu/*.o
+	rm -rf kernel/*.o boot/*.bin boot/*.o drivers/*.o cpu/*.o libc/*.o
 
