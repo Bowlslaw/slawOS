@@ -2,7 +2,7 @@
 #define STRING_H
 
 /* Return length of string */
-int str_len(char s[]);
+int str_len(char *s);
 
 /* Reverse a string */
 void reverse(char s[]);
@@ -14,6 +14,8 @@ void backspace(char s[]);
 
 void append(char s[], char n);
 
-int str_cmp(char s1[], char s2[]);
+void str_cat(char *s, char *n);
+
+int str_cmp(char *s1, char *s2);
 
 #endif

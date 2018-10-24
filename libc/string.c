@@ -41,10 +41,19 @@ void int2ascii(int n, char *str) {
 void append(char s[], char n) {
 	int len = str_len(s);
 	s[len] = n;
-	s[len-1] = '\0';
+	s[len+1] = '\0';
 }
 
-void backspace(char s[]) {
+/* append s to n */
+void str_cat(char *dest, char *src) {
+	while(*dest != '\0')
+		dest++;
+	while((*dest++ = *src++) != '\0')
+		;
+}
+
+
+void backspace(char *s) {
 	int len = str_len(s);
 	s[len-1] = '\0';
 }
