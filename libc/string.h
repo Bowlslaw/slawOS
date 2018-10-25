@@ -18,4 +18,6 @@ void str_cat(char *s, char *n);
 
 int str_cmp(char *s1, char *s2);
 
+void hex2ascii(int n, char *str);
+
 #endif
