@@ -4,16 +4,17 @@
 #include <kernel/tty.h>
 
 void kernel_main(void) {
-	terminal_initialize();
-	printf("Hello, kernel World!\n");
+  terminal_initialize();
+  printf("Hello, kernel World!\n");
 
-	const char src[50] = "this is a test string";
-	char dest[50];
-	strcpy(dest, "Helloooo!");
-	printf("Before memmove: %s\n", dest);
-	memmove(dest, src, strlen(src) + 1);
-	printf("After memmove: %s\n", dest);
+  char dest[] = "oldstring";
+  const char src[] = "newstring";
 
-	for(int i = 0; i < 23; i++)
-	  printf("%d\n", i);
+  printf("Before memove: %s | %s\n", dest, src);
+  memmove(dest, src, strlen(dest));
+  printf("After memmove: %s | %s\n", dest, src);
+
+  for(int i = 0; i < 30; i++) {
+	printf("HERE\n");
+  }
 }
