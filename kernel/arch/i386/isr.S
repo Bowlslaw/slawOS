@@ -1,48 +1,64 @@
 .global kbd_isr
 kbd_isr:
-	call kbd_isr_main
-	iret
- .extern isr_handler
- isr_common_stub:
-	pusha
- 	# Save data segment descriptor
-	movw %ds, %ax 
-	pushl %eax
- 	# load kernel segment descriptor
-	movw $0x10, %ax 
-	movw %ax, %ds
-	movw %ax, %es
-	movw %ax, %fs
-	movw %ax, %gs
- 	call isr_handler
- 	popl %eax
- 	# Reload original data segment descriptor
-	movw %ax, %ds 
-	movw %ax, %es
-	movw %ax, %fs
-	movw %ax, %gs
- 	# Clean up pushed error code
-	popa
-	add $8, %esp 
-	sti
-	iret
- # define a macro, taking one parameter
-.macro ISR_NOERRCODE n  
+    call kbd_isr_main
+    iret
+
+.extern isr_handler
+
+isr_common_stub:
+  pusha
+
+  /* Save data segment descriptor */
+  movw %ds, %ax
+
+  pushl %eax
+
+  /* load kernel segment descriptor */
+  movw $(0x2 * 8), %ax
+  movw %ax, %ds
+  movw %ax, %es
+  movw $(0x1 * 8), %ax
+  movw %ax, %fs
+  movw %ax, %gs
+
+  /* Push regs argument for isr_handler */
+  pushl %esp
+  call isr_handler
+  addl $4, %esp
+
+  popl %eax
+
+  /* Reload original data segment descriptor */
+  movw %ax, %ds
+  movw %ax, %es
+  movw %ax, %fs
+  movw %ax, %gs
+
+  /* Clean up pushed error code */
+  popa
+  add $8, %esp
+  sti
+  iret
+
+/* define a macro, taking one parameter */
+.macro ISR_NOERRCODE n
 .global isr\n
 isr\n:
-	cli
-	pushl $0
-	pushl $\n
-	jmp isr_common_stub
+  cli
+  pushl $0
+  pushl $\n
+  jmp isr_common_stub
 .endm
- .macro ISR_ERRCODE n
+
+.macro ISR_ERRCODE n
 .global isr\n
 isr\n:
-	cli
-	pushl \n
-	jmp isr_common_stub
+  cli
+  pushl \n
+  jmp isr_common_stub
 .endm
- ISR_NOERRCODE 0
+
+ISR_NOERRCODE 0
 ISR_NOERRCODE 1
 ISR_NOERRCODE 2
 ISR_NOERRCODE 3
@@ -74,3 +90,4 @@ ISR_NOERRCODE 28
 ISR_NOERRCODE 29
 ISR_NOERRCODE 30
 ISR_NOERRCODE 31
+ISR_NOERRCODE 33

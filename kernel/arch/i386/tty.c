@@ -16,6 +16,7 @@
 #define REG_SCREEN_CTRL 0x3D4
 #define REG_SCREEN_DATA 0x3D5
 
+
 #define NEWLINE 0x0A
 #define TAB 0x09
 
@@ -40,11 +41,6 @@ int get_offset_col(int offset) {
   return (offset - (get_offset_row(offset) * 2 * VGA_WIDTH)) / 2;
 }
 
-static void scroll() {
-  if(terminal_row >= VGA_HEIGHT) {
-
-  }
-}
 void terminal_print_error(void) {
   if(terminal_row >= VGA_HEIGHT) {
 	terminal_row = 0;

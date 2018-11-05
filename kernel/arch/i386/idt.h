@@ -1,34 +1,36 @@
 #ifndef _ARCH_I386_IDT_H
 #define _ARCH_I386_IDT_H
- #define IDT_SIZE 256
+
+#define IDT_SIZE 256
 
 #include <stdint.h>
 
- /** IDT table entry */
-struct idt_entry
-{
+ /* IDT table entry */
+struct idt_entry {
 	uint16_t base_low;
 	uint16_t selector;
 	uint8_t  zero;
 	uint8_t  type_attr;
 	uint16_t base_high;
 } __attribute__((packed));
+
  /** Pointer type used by `lidt` instuction */
-struct idt_ptr
-{
+struct idt_ptr {
 	uint16_t limit;
 	uint32_t base;
 } __attribute__((packed));
- struct regs
-{
+
+struct regs {
 	uint32_t ds;
 	uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; //Pushed by pusha
 	uint32_t irqn, err;
-	uint32_t eip, cs, eflags, useresp, ss; // Pushed by CPU on interrupt
+	uint32_t eip, cs, eflags; // Pushed by CPU on interrupt
 } __attribute__((packed));
- // ASM functions
+
+/* ASM functions */
 extern void idt_flush(uint32_t);
- extern void isr0();
+
+extern void isr0();
 extern void isr1();
 extern void isr2();
 extern void isr3();
@@ -60,4 +62,6 @@ extern void isr28();
 extern void isr29();
 extern void isr30();
 extern void isr31();
- #endif
+extern void isr33();
+
+#endif

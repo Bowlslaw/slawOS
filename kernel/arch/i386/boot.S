@@ -124,6 +124,6 @@ _start:
 	call kernel_main
 
 	/* Infinite loop if the system has nothing more to do. */
-	cli
-1:	hlt
-	jmp 1b
+        cli
+hang:	hlt
+        jmp hang

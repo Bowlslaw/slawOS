@@ -1,15 +1,15 @@
-//#include <arch/i386/interrupts.h>
-
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
+
 #include "idt.h"
 #include "interrupts.h"
+
 #include <kernel/tty.h>
 
- extern void kbd_isr_main(void);
+extern void kbd_isr_main(void);
 
- static struct idt_entry IDT[IDT_SIZE];
+static struct idt_entry IDT[IDT_SIZE];
 
 static void idt_set_gate(int num, uint32_t base, uint16_t selector, uint8_t type_attr) {
 	IDT[num].base_low = base & 0xFFFF;
@@ -19,6 +19,7 @@ static void idt_set_gate(int num, uint32_t base, uint16_t selector, uint8_t type
  	// TODO: it must be type_attr | 0x60 to set DPL=3 in user-mode
 	IDT[num].type_attr = type_attr;
 }
+
 void idt_init(void) {
 	struct idt_ptr idt_ptr;
 
@@ -56,22 +57,57 @@ void idt_init(void) {
 	idt_set_gate(29, (uint32_t)isr29, 0x08, 0x8E);
 	idt_set_gate(30, (uint32_t)isr30, 0x08, 0x8E);
 	idt_set_gate(31, (uint32_t)isr31, 0x08, 0x8E);
+
+	/* Keyboard IDT entry */
+	idt_set_gate(0x21, (uint32_t)isr33, 0x08, 0x8E);
+
  	idt_ptr.base = (uint32_t)&IDT;
 	idt_ptr.limit = sizeof(IDT) - 1;
 	idt_flush((uint32_t)&idt_ptr);
 }
+
+void pic_init() {
+  port_byte_out(PIC1_CMD, 0x11);
+  port_byte_out(PIC2_CMD, 0x11);
+
+  port_byte_out(PIC1_DATA, 0x20);
+  port_byte_out(PIC1_DATA, 0x28);
+
+  port_byte_out(PIC1_DATA, 0x04);
+  port_byte_out(PIC1_DATA, 0x02);
+
+  port_byte_out(PIC1_DATA, 0x01);
+  port_byte_out(PIC1_DATA, 0x01);
+}
+
 void interrupts_init(void) {
   idt_init();
+  pic_init();
+
   /* 0xfd = 11111101 - Enable only IRQ1 (kbd) */
-  port_byte_out(0x21, 0xfd);
+  port_byte_out(PIC1_DATA, 0xfd);
+  port_byte_out(PIC2_DATA, 0xff);
+
   /* Enable interrupts */
   asm volatile ("sti");
 }
+
 /*void isr_handler(struct regs *r)*/
 void isr_handler(struct regs *r) {
-  kbd_isr_main();
-  /*
-   *int irqn = (int)r->irqn;
-   *printf("Interrupt %d\n", irqn);
-   */
+  int irqn = (int)r->irqn;
+  printf("INT%d\n", irqn);
+
+  port_byte_out(PIC1_CMD, 0x20);
+
+  switch(irqn) {
+  case 0x21:
+	kbd_isr_main();
+	break;
+
+  default:
+	printf("Unknown interrupt %d\n", irqn);
+	break;
+  }
 }
+
+

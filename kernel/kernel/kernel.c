@@ -3,8 +3,15 @@
 
 #include <kernel/tty.h>
 
+#include "../../kernel/arch/i386/init.h"
+
 void kernel_main(void) {
   terminal_initialize();
+  arch_initialize();
+  for(;;)
+	asm("hlt");
+
+  /*
   printf("Hello, kernel World!\n");
 
   char dest[] = "oldstring";
@@ -14,12 +21,7 @@ void kernel_main(void) {
   memmove(dest, src, strlen(dest));
   printf("After memmove: %s | %s\n", dest, src);
 
-  char src2[] = "poopstring";
-  char dest2[] = "peestring";
-  printf("Before strcpy: %s | %s\n", dest2, src2);
-  strcpy(dest, src);
-  printf("After strcpy: %s | %s\n", dest2, src2);
-
   for(int i = 0; i < 10; i++)
 	printf("i = %d\n", i);
+  */
 }
