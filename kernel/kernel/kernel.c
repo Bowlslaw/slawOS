@@ -14,7 +14,12 @@ void kernel_main(void) {
   memmove(dest, src, strlen(dest));
   printf("After memmove: %s | %s\n", dest, src);
 
-  for(int i = 0; i < 30; i++) {
-	printf("HERE\n");
-  }
+  char src2[] = "poopstring";
+  char dest2[] = "peestring";
+  printf("Before strcpy: %s | %s\n", dest2, src2);
+  strcpy(dest, src);
+  printf("After strcpy: %s | %s\n", dest2, src2);
+
+  for(int i = 0; i < 10; i++)
+	printf("i = %d\n", i);
 }

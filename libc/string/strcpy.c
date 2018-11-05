@@ -1,6 +1,6 @@
 #include <string.h>
 
-void strcpy(char *src, const char *dst) {
-	while(*src++ = *dst++)
-		;
+void strcpy(char *dest, const char *src) {
+  while((*dest++ = *src++) != '\0')
+	;
 }
