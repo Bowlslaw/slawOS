@@ -10,7 +10,6 @@ isr_common_stub:
 
   /* Save data segment descriptor */
   movw %ds, %ax
-
   pushl %eax
 
   /* load kernel segment descriptor */

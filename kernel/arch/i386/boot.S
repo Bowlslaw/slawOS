@@ -120,10 +120,12 @@ _start:
 	/* Set up the stack. */
 	mov $stack_top, %esp
 
-	#/* Enter the high-level kernel. */
+	/* Enter the high-level kernel. */
 	call kernel_main
 
 	/* Infinite loop if the system has nothing more to do. */
         cli
 hang:	hlt
         jmp hang
+
+  .size _start, . - _start

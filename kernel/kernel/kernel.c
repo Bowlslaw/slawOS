@@ -8,6 +8,9 @@
 void kernel_main(void) {
   terminal_initialize();
   arch_initialize();
+
+  printf("Hello\n");
+
   for(;;)
 	asm("hlt");
 

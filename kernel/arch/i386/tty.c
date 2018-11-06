@@ -127,6 +127,7 @@ unsigned char port_byte_in(unsigned short port) {
   return result;
 }
 
+/* outb */
 void port_byte_out(unsigned short port, unsigned char data) {
   asm ("out %%al, %%dx" : : "a" (data), "d" (port));
 }

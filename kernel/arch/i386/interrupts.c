@@ -67,17 +67,32 @@ void idt_init(void) {
 }
 
 void pic_init() {
+  /* ICW1 - begin initialization */
   port_byte_out(PIC1_CMD, 0x11);
   port_byte_out(PIC2_CMD, 0x11);
 
+  /* ICW2 - remap offset address of IDT
+   * In x86 protected mode, we have to remap the PICs after 0x20 because
+   * Intel has designated the first 32 interrupts as "reserved" for CPU exceptions
+   */
   port_byte_out(PIC1_DATA, 0x20);
-  port_byte_out(PIC1_DATA, 0x28);
+  port_byte_out(PIC2_DATA, 0x28);
 
+  /* OCW3 - set up cascading */
   port_byte_out(PIC1_DATA, 0x04);
-  port_byte_out(PIC1_DATA, 0x02);
+  port_byte_out(PIC2_DATA, 0x02);
+  /*
+   * port_byte_out(PIC1_DATA, 0x0);
+   * port_byte_out(PIC2_DATA, 0x0);
+  */
 
+  /* ICW4 - environment info */
   port_byte_out(PIC1_DATA, 0x01);
-  port_byte_out(PIC1_DATA, 0x01);
+  port_byte_out(PIC2_DATA, 0x01);
+
+  /* mask interrupts */
+  port_byte_out(PIC1_DATA, 0xFF);
+  port_byte_out(PIC2_DATA, 0xFF);
 }
 
 void interrupts_init(void) {
@@ -85,8 +100,8 @@ void interrupts_init(void) {
   pic_init();
 
   /* 0xfd = 11111101 - Enable only IRQ1 (kbd) */
-  port_byte_out(PIC1_DATA, 0xfd);
-  port_byte_out(PIC2_DATA, 0xff);
+  port_byte_out(PIC1_DATA, 0xFD);
+  //port_byte_out(PIC2_DATA, 0xff);
 
   /* Enable interrupts */
   asm volatile ("sti");
@@ -97,6 +112,7 @@ void isr_handler(struct regs *r) {
   int irqn = (int)r->irqn;
   printf("INT%d\n", irqn);
 
+  /* write EOI */
   port_byte_out(PIC1_CMD, 0x20);
 
   switch(irqn) {

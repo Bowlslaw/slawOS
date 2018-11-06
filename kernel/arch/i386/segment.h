@@ -51,6 +51,7 @@ struct segment_descriptor {
  // Flags value
 // Generic 32-bit segment: G=1, D/B=1 (32-bit), L=0 (not 64 bits), AVL=0
 #define SEG_FLAGS_32 0xCF
+
 // Pointer to GDT that will be loaded in gdtr
 struct gdt_ptr {
   uint16_t limit;
