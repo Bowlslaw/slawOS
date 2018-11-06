@@ -110,7 +110,6 @@ void interrupts_init(void) {
 /*void isr_handler(struct regs *r)*/
 void isr_handler(struct regs *r) {
   int irqn = (int)r->irqn;
-  printf("INT%d\n", irqn);
 
   /* write EOI */
   port_byte_out(PIC1_CMD, 0x20);
@@ -121,6 +120,7 @@ void isr_handler(struct regs *r) {
 	break;
 
   default:
+	printf("INT%d\n", irqn);
 	printf("Unknown interrupt %d\n", irqn);
 	break;
   }
