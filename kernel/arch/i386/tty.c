@@ -13,13 +13,6 @@
 
 #include "vga.h"
 
-#define REG_SCREEN_CTRL 0x3D4
-#define REG_SCREEN_DATA 0x3D5
-
-
-#define NEWLINE 0x0A
-#define TAB 0x09
-
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
 static uint16_t *const VGA_MEMORY = (uint16_t *)0xC03FF000;
@@ -41,10 +34,10 @@ int get_offset_col(int offset) {
   return (offset - (get_offset_row(offset) * 2 * VGA_WIDTH)) / 2;
 }
 
+/* print white/red E to bottom right corner of screen */
 void terminal_print_error(void) {
   if(terminal_row >= VGA_HEIGHT) {
 	terminal_row = 0;
-	/* print white/red E to bottom right corner of screen */
 	terminal_putentryat('E', vga_entry_color(VGA_COLOR_RED, VGA_COLOR_WHITE),
 						VGA_WIDTH - 1, VGA_HEIGHT - 1);
   }
@@ -81,8 +74,14 @@ void terminal_putchar(char c) {
 		terminal_column = 0;
 		break;
 
-	  case '\t':
-		/* TODO: Implement tab */
+	  case TAB:
+		terminal_putentryat('    ', terminal_color, terminal_column, terminal_row);
+		terminal_column += 4;
+		break;
+
+	  case BACKSPACE:
+		terminal_column--;
+		terminal_putentryat(' ', terminal_color, terminal_column, terminal_row);
 		break;
 
 	  default:
@@ -133,7 +132,8 @@ void port_byte_out(unsigned short port, unsigned char data) {
 }
 
 int get_cursor_offset() {
-  /* Use the VGA ports to get the current cursor position
+  /*
+   * Use the VGA ports to get the current cursor position
    * 1. Ask for high byte of the cursor offset (data 14)
    * 2. Ask for low byte (data 15)
    */
