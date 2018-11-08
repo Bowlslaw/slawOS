@@ -67,63 +67,62 @@ void idt_init(void) {
 }
 
 void pic_init() {
-  /* ICW1 - begin initialization */
-  port_byte_out(PIC1_CMD, 0x11);
-  port_byte_out(PIC2_CMD, 0x11);
+	/* ICW1 - begin initialization */
+	port_byte_out(PIC1_CMD, ICW1_INIT | ICW1_ICW4);
+	port_byte_out(PIC2_CMD, ICW1_INIT | ICW1_ICW4);
 
-  /* ICW2 - remap offset address of IDT
-   * In x86 protected mode, we have to remap the PICs after 0x20 because
-   * Intel has designated the first 32 interrupts as "reserved" for CPU exceptions
-   */
-  port_byte_out(PIC1_DATA, 0x20);
-  port_byte_out(PIC2_DATA, 0x28);
+	/* ICW2 - remap offset address of IDT
+	 * In x86 protected mode, we have to remap the PICs after 0x20 because
+	 * Intel has designated the first 32 interrupts as "reserved" for CPU exceptions
+	 */
+	port_byte_out(PIC1_DATA, 0x20);
+	port_byte_out(PIC2_DATA, 0x28);
 
-  /* OCW3 - set up cascading */
-  port_byte_out(PIC1_DATA, 0x04);
-  port_byte_out(PIC2_DATA, 0x02);
-  /*
-   * port_byte_out(PIC1_DATA, 0x0);
-   * port_byte_out(PIC2_DATA, 0x0);
-  */
+	/* OCW3 - set up cascading */
+	port_byte_out(PIC1_DATA, 0x04);
+	port_byte_out(PIC2_DATA, 0x02);
+	/*
+	 * port_byte_out(PIC1_DATA, 0x0);
+	 * port_byte_out(PIC2_DATA, 0x0);
+	 */
 
-  /* ICW4 - environment info */
-  port_byte_out(PIC1_DATA, 0x01);
-  port_byte_out(PIC2_DATA, 0x01);
+	/* ICW4 - environment info */
+	port_byte_out(PIC1_DATA, ICW4_8086);
+	port_byte_out(PIC2_DATA, ICW4_8086);
 
-  /* mask interrupts */
-  port_byte_out(PIC1_DATA, 0xFF);
-  port_byte_out(PIC2_DATA, 0xFF);
+	/* mask interrupts */
+	port_byte_out(PIC1_DATA, 0xFF);
+	port_byte_out(PIC2_DATA, 0xFF);
 }
 
 void interrupts_init(void) {
-  idt_init();
-  pic_init();
+	idt_init();
+	pic_init();
 
-  /* 0xfd = 11111101 - Enable only IRQ1 (kbd) */
-  port_byte_out(PIC1_DATA, 0xFD);
-  //port_byte_out(PIC2_DATA, 0xff);
+	/* 0xfd = 11111101 - Enable only IRQ1 (kbd) */
+	port_byte_out(PIC1_DATA, 0xFD);
+	//port_byte_out(PIC2_DATA, 0xff);
 
-  /* Enable interrupts */
-  asm volatile ("sti");
+	/* Enable interrupts */
+	asm volatile ("sti");
 }
 
-/*void isr_handler(struct regs *r)*/
 void isr_handler(struct regs *r) {
-  int irqn = (int)r->irqn;
+	int irqn = (int)r->irqn;
 
-  /* write EOI */
-  port_byte_out(PIC1_CMD, 0x20);
+	/* write EOI */
+	port_byte_out(PIC1_CMD, 0x20);
 
-  switch(irqn) {
-  case 0x21:
-	kbd_isr_main();
-	break;
+	switch(irqn) {
+	case 0x21:
+		kbd_isr_main();
+		break;
 
-  default:
-	printf("INT%d\n", irqn);
-	printf("Unknown interrupt %d\n", irqn);
-	break;
-  }
+	default:
+		printf("INT%d\n", irqn);
+		printf("Unknown interrupt %d\n", irqn);
+		break;
+	}
 }
 
 

@@ -6,16 +6,16 @@
 
 unsigned char kbd_map[128] =
   {
-   0,  27, '1', '2', '3', '4', '5', '6', '7', '8',	/* 9 */
-   '9', '0', '-', '=', '\b',	/* Backspace */
-   '\t',			/* Tab */
-   'q', 'w', 'e', 'r',	/* 19 */
-   't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n',	/* Enter key */
-   0,			/* 29   - Control */
-   'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',	/* 39 */
-   '\'', '`',   0,		/* Left shift */
-   '\\', 'z', 'x', 'c', 'v', 'b', 'n',			/* 49 */
-   'm', ',', '.', '/',   0,				/* Right shift */
+   0,  27, '1', '2', '3', '4', '5', '6', '7', '8',	    /* 9 */
+   '9', '0', '-', '=', '\b',	                        /* Backspace */
+   '\t',			                                    /* Tab */
+   'q', 'w', 'e', 'r',	                                /* 19 */
+   't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n',	    /* Enter key */
+   0,			                                        /* 29   - Control */
+   'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',    /* 39 */
+   '\'', '`',   0,		                                /* Left shift */
+   '\\', 'z', 'x', 'c', 'v', 'b', 'n',			        /* 49 */
+   'm', ',', '.', '/',   0,				                /* Right shift */
    '*',
    0,	/* Alt */
    ' ',	/* Space bar */
@@ -42,21 +42,22 @@ unsigned char kbd_map[128] =
    0,	/* F11 Key */
    0,	/* F12 Key */
    0,	/* All other keys are undefined */
-};
+  };
 
 void kbd_isr_main(void) {
-  uint8_t status;
-  char keycode;
+    uint8_t status;
+	char keycode;
 
-#define KBD_STATUS_PORT 0x64
-  status = port_byte_in(KBD_STATUS_PORT);
+    #define KBD_STATUS_PORT 0x64
+	status = port_byte_in(KBD_STATUS_PORT);
 
-  if(status & 0x01) {
-#define KBD_DATA_PORT 0x60
-	keycode = port_byte_in(KBD_DATA_PORT);
-	if(keycode < 0)
-	  return;
+    if(status & 0x01) {
+        #define KBD_DATA_PORT 0x60
+	    keycode = port_byte_in(KBD_DATA_PORT);
+	    if(keycode < 0)
+		    return;
 
-	putchar(kbd_map[keycode]);
-  }
+		//printf("keycode = %d\n", keycode);
+		putchar(kbd_map[keycode]);
+	}
 }

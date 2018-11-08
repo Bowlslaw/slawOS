@@ -3,6 +3,6 @@
 #include "segment.h"
 
 void arch_initialize(void) {
-  gdt_init();
-  interrupts_init();
+	gdt_init();
+	interrupts_init();
 }

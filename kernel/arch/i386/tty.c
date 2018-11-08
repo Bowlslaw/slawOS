@@ -23,24 +23,24 @@ static uint8_t terminal_color;
 static uint16_t *terminal_buffer;
 
 int get_offset(int col, int row) {
-  return 2 * (row * VGA_WIDTH + col);
+	return 2 * (row * VGA_WIDTH + col);
 }
 
 int get_offset_row(int offset) {
-  return offset / (2 * VGA_WIDTH);
+	return offset / (2 * VGA_WIDTH);
 }
 
 int get_offset_col(int offset) {
-  return (offset - (get_offset_row(offset) * 2 * VGA_WIDTH)) / 2;
+	return (offset - (get_offset_row(offset) * 2 * VGA_WIDTH)) / 2;
 }
 
 /* print white/red E to bottom right corner of screen */
 void terminal_print_error(void) {
-  if(terminal_row >= VGA_HEIGHT) {
-	terminal_row = 0;
-	terminal_putentryat('E', vga_entry_color(VGA_COLOR_RED, VGA_COLOR_WHITE),
-						VGA_WIDTH - 1, VGA_HEIGHT - 1);
-  }
+	if(terminal_row >= VGA_HEIGHT) {
+		terminal_row = 0;
+		terminal_putentryat('E', vga_entry_color(VGA_COLOR_RED, VGA_COLOR_WHITE),
+							VGA_WIDTH - 1, VGA_HEIGHT - 1);
+	}
 }
 
 void terminal_initialize(void) {
@@ -69,42 +69,42 @@ void terminal_putchar(char c) {
 	unsigned char uc = c;
 
 	switch(c) {
-	  case NEWLINE:
+	case NEWLINE:
 		terminal_row++;
 		terminal_column = 0;
 		break;
 
-	  case TAB:
+	case TAB:
 		terminal_putentryat('    ', terminal_color, terminal_column, terminal_row);
 		terminal_column += 4;
 		break;
 
-	  case BACKSPACE:
+	case BACKSPACE:
 		terminal_column--;
 		terminal_putentryat(' ', terminal_color, terminal_column, terminal_row);
 		break;
 
-	  default:
+	default:
 		terminal_putentryat(uc, terminal_color, terminal_column, terminal_row);
 		terminal_column++;
 	}
 
 	if(terminal_column >= VGA_WIDTH) {
-	  terminal_column = 0;
-	  terminal_row++;
+		terminal_column = 0;
+		terminal_row++;
 	}
 
 	if(terminal_row >= VGA_HEIGHT) {
-	  size_t i, j;
-	  for(i = 0; i < VGA_WIDTH-1; i++) {
-		for(j = VGA_HEIGHT-2; j > 0; j--)
-		  terminal_buffer[(j * VGA_WIDTH) + i] = terminal_buffer[((j+1) * VGA_WIDTH) + i];
-	  }
-	  for(i = 0; i < VGA_WIDTH; i++) {
-		terminal_putentryat(' ', terminal_color, i, VGA_HEIGHT - 1);
-	  }
+		size_t i, j;
+		for(i = 0; i < VGA_WIDTH-1; i++) {
+			for(j = VGA_HEIGHT-2; j > 0; j--)
+				terminal_buffer[(j * VGA_WIDTH) + i] = terminal_buffer[((j+1) * VGA_WIDTH) + i];
+		}
+		for(i = 0; i < VGA_WIDTH; i++) {
+			terminal_putentryat(' ', terminal_color, i, VGA_HEIGHT - 1);
+		}
 
-	  terminal_row = VGA_HEIGHT - 1;
+		terminal_row = VGA_HEIGHT - 1;
 	}
 
 	update_cursor(terminal_column, terminal_row);
@@ -121,53 +121,53 @@ void terminal_writestring(const char *data) {
 
 /* inb */
 unsigned char port_byte_in(unsigned short port) {
-  unsigned char result;
-  asm ("in %%dx, %%al" : "=a" (result) : "d" (port));
-  return result;
+	unsigned char result;
+	asm ("in %%dx, %%al" : "=a" (result) : "d" (port));
+	return result;
 }
 
 /* outb */
 void port_byte_out(unsigned short port, unsigned char data) {
-  asm ("out %%al, %%dx" : : "a" (data), "d" (port));
+	asm ("out %%al, %%dx" : : "a" (data), "d" (port));
 }
 
 int get_cursor_offset() {
-  /*
-   * Use the VGA ports to get the current cursor position
-   * 1. Ask for high byte of the cursor offset (data 14)
-   * 2. Ask for low byte (data 15)
-   */
-  port_byte_out(REG_SCREEN_CTRL, 14);
-  int offset = port_byte_in(REG_SCREEN_DATA) << 8; /* High byte: << 8 */
-  port_byte_out(REG_SCREEN_CTRL, 15);
-  offset += port_byte_in(REG_SCREEN_DATA);
-  return offset * 2; /* Position * size of character cell */
+	/*
+	 * Use the VGA ports to get the current cursor position
+	 * 1. Ask for high byte of the cursor offset (data 14)
+	 * 2. Ask for low byte (data 15)
+	 */
+	port_byte_out(REG_SCREEN_CTRL, 14);
+	int offset = port_byte_in(REG_SCREEN_DATA) << 8; /* High byte: << 8 */
+	port_byte_out(REG_SCREEN_CTRL, 15);
+	offset += port_byte_in(REG_SCREEN_DATA);
+	return offset * 2; /* Position * size of character cell */
 }
 
 void set_cursor_offset(int offset) {
-  /* Similar to get_cursor_offset, but instead of reading we write data */
-  offset /= 2;
-  port_byte_out(REG_SCREEN_CTRL, 14);
-  port_byte_out(REG_SCREEN_DATA, (unsigned char)(offset >> 8));
-  port_byte_out(REG_SCREEN_CTRL, 15);
-  port_byte_out(REG_SCREEN_DATA, (unsigned char)(offset & 0xff));
+	/* Similar to get_cursor_offset, but instead of reading we write data */
+	offset /= 2;
+	port_byte_out(REG_SCREEN_CTRL, 14);
+	port_byte_out(REG_SCREEN_DATA, (unsigned char)(offset >> 8));
+	port_byte_out(REG_SCREEN_CTRL, 15);
+	port_byte_out(REG_SCREEN_DATA, (unsigned char)(offset & 0xff));
 }
 
 void update_cursor(int x, int y) {
-  uint16_t pos = y * VGA_WIDTH + x;
+	uint16_t pos = y * VGA_WIDTH + x;
 
-  port_byte_out(REG_SCREEN_CTRL, 15);
-  port_byte_out(REG_SCREEN_DATA, (uint8_t)(pos & 0xFF));
-  port_byte_out(REG_SCREEN_CTRL, 14);
-  port_byte_out(REG_SCREEN_DATA, (uint8_t)(pos >> 8) & 0xFF);
+	port_byte_out(REG_SCREEN_CTRL, 15);
+	port_byte_out(REG_SCREEN_DATA, (uint8_t)(pos & 0xFF));
+	port_byte_out(REG_SCREEN_CTRL, 14);
+	port_byte_out(REG_SCREEN_DATA, (uint8_t)(pos >> 8) & 0xFF);
 }
 
 /*
-void enable_cursor(uint8_t cursor_start, uint8_t cursor_end) {
+  void enable_cursor(uint8_t cursor_start, uint8_t cursor_end) {
   outb(0x3D4, 0x0A);
   outb(0x3D, (inb(0x3D5) & 0xC0) | cursor_start);
 
   outb(0x3D4, 0x0B);
   outb(0x3D5, (inb(0x3D5) & 0xE0) | cursor_end);
-}
+  }
 */

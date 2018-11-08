@@ -13,11 +13,11 @@ static bool print(const char *data, size_t length) {
 }
 
 int numtostr(unsigned int n, char *str) {
-  while(n) {
-	*str++ = (n % 10) + '0';
-	n /= 10;
-  }
-  return 0;
+	while(n) {
+		*str++ = (n % 10) + '0';
+		n /= 10;
+	}
+	return 0;
 }
 
 int printf(const char *restrict format, ...) {
@@ -71,11 +71,11 @@ int printf(const char *restrict format, ...) {
 				return -1;
 			written += len;
 		} else if(*format == 'd') {
-		  format++;
-		  int d = (int)va_arg(parameters, int);
-		  if(numtostr(d, number))
-			return -1;
-		  print(number, strlen(number));
+			format++;
+			int d = (int)va_arg(parameters, int);
+			if(numtostr(d, number))
+				return -1;
+			print(number, strlen(number));
 		} else {
 			format = format_begun_at;
 			size_t len = strlen(format);

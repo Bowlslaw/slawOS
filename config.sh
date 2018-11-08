@@ -24,5 +24,5 @@ export CC="$CC --sysroot=$SYSROOT"
 # Work around that the -elf gcc targets doesn't have a system include directory
 # because it was configured with --without-headers rather than --with-sysroot.
 if echo "$HOST" | grep -Eq -- '-elf($|-)'; then
-  export CC="$CC -isystem=$INCLUDEDIR"
+	export CC="$CC -isystem=$INCLUDEDIR"
 fi
