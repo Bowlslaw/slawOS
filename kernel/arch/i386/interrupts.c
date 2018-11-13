@@ -2,10 +2,10 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#include <kernel/tty.h>
+
 #include "idt.h"
 #include "interrupts.h"
-
-#include <kernel/tty.h>
 
 extern void kbd_isr_main(void);
 
@@ -81,10 +81,6 @@ void pic_init() {
 	/* OCW3 - set up cascading */
 	port_byte_out(PIC1_DATA, 0x04);
 	port_byte_out(PIC2_DATA, 0x02);
-	/*
-	 * port_byte_out(PIC1_DATA, 0x0);
-	 * port_byte_out(PIC2_DATA, 0x0);
-	 */
 
 	/* ICW4 - environment info */
 	port_byte_out(PIC1_DATA, ICW4_8086);
@@ -107,6 +103,45 @@ void interrupts_init(void) {
 	asm volatile ("sti");
 }
 
+char *exception_msg[] =
+	{
+	 "Division By Zero",
+	 "Debug",
+	 "Non Maskable Interrupt",
+	 "Breakpoint",
+	 "Into Detected Overflow",
+	 "Out of Bounds",
+	 "Invalid Opcode",
+	 "No Coprocessor",
+
+	 "Double Fault",
+	 "Coprocessor Segment Overrun",
+	 "Bad TSS",
+	 "Segment Not Present",
+	 "Stack Fault",
+	 "General Protection Fault",
+	 "Page Fault",
+	 "Unknown Interrupt",
+
+	 "Coprocessor Fault",
+	 "Alignment Check",
+	 "Machine Check",
+	 "Reserved",
+	 "Reserved",
+	 "Reserved",
+	 "Reserved",
+	 "Reserved",
+
+	 "Reserved",
+	 "Reserved",
+	 "Reserved",
+	 "Reserved",
+	 "Reserved",
+	 "Reserved",
+	 "Reserved",
+	 "Reserved"
+	};
+
 void isr_handler(struct regs *r) {
 	int irqn = (int)r->irqn;
 
@@ -124,5 +159,3 @@ void isr_handler(struct regs *r) {
 		break;
 	}
 }
-
-

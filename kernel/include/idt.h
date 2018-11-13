@@ -14,7 +14,7 @@ struct idt_entry {
 	uint16_t base_high;
 } __attribute__((packed));
 
- /** Pointer type used by `lidt` instuction */
+ /* Pointer type used by `lidt` instuction */
 struct idt_ptr {
 	uint16_t limit;
 	uint32_t base;
@@ -22,9 +22,9 @@ struct idt_ptr {
 
 struct regs {
 	uint32_t ds;
-	uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; //Pushed by pusha
-	uint32_t irqn, err;
-	uint32_t eip, cs, eflags; // Pushed by CPU on interrupt
+	uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; /* Pushed by pusha */
+	uint32_t irqn, err;                              /* Interrupts number and error code */
+	uint32_t eip, cs, eflags;                        /* Pushed by CPU on interrupt */
 } __attribute__((packed));
 
 /* ASM functions */

@@ -6,6 +6,8 @@ kbd_isr:
 .extern isr_handler
 
 isr_common_stub:
+  /* Save regsiters in order:
+   * EAX, ECX, EDX, EBX, ESP, EBP, ESI, EDI */
   pusha
 
   /* Save data segment descriptor */
@@ -44,6 +46,8 @@ isr_common_stub:
 .global isr\n
 isr\n:
   cli
+  /* When there is no error code provided, explicitly push 0 to unify ISR
+   * stacks of ISR_NOERRCODE and ISR_ERRCODE */
   pushl $0
   pushl $\n
   jmp isr_common_stub
@@ -53,6 +57,7 @@ isr\n:
 .global isr\n
 isr\n:
   cli
+  /* Error code is already pushed before interrupt vector number */
   pushl \n
   jmp isr_common_stub
 .endm
